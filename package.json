@@ -2,7 +2,7 @@
   "name": "llm-benchmark",
   "version": "1.0.0",
   "description": "Everywhere-Ready LLM Code Optimizer & Self-Validating Benchmark Suite",
-  "private": true,
+  "private": false,
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
