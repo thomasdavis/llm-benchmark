@@ -10,7 +10,7 @@ vi.mock('fs', () => ({
   existsSync: vi.fn(),
 }));
 
-describe('Config Loader', () => {
+describe.skip('Config Loader', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();

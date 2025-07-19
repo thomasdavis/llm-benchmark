@@ -3,6 +3,9 @@ import { PluginManager } from '../plugins/manager.js';
 import jsPlugin from '../plugins/built-in/js.js';
 import type { Config } from '../types/config.js';
 
+// Mock fs/promises at the top level
+vi.mock('fs/promises');
+
 describe('Plugin System', () => {
   let pluginManager: PluginManager;
   let config: Config;
@@ -52,13 +55,14 @@ describe('Plugin System', () => {
     });
 
     it('should extract function from code', async () => {
-      vi.mock('fs/promises', () => ({
-        readFile: vi.fn().mockResolvedValue(`
-          export default function testFunc(a, b) {
-            return a + b;
-          }
-        `),
-      }));
+      const { readFile } = await import('fs/promises');
+      vi.mocked(readFile).mockResolvedValue(
+        `
+export default function testFunc(a, b) {
+  return a + b;
+}
+      ` as any,
+      );
 
       const result = await jsPlugin.extract('test.js');
 
@@ -68,13 +72,14 @@ describe('Plugin System', () => {
     });
 
     it('should extract named function', async () => {
-      vi.mock('fs/promises', () => ({
-        readFile: vi.fn().mockResolvedValue(`
-          export function namedFunc(x, y, z = 10) {
-            return x * y + z;
-          }
-        `),
-      }));
+      const { readFile } = await import('fs/promises');
+      vi.mocked(readFile).mockResolvedValue(
+        `
+export function namedFunc(x, y, z = 10) {
+  return x * y + z;
+}
+      ` as any,
+      );
 
       const result = await jsPlugin.extract('test.js', 'namedFunc');
 
