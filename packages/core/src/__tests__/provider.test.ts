@@ -27,27 +27,29 @@ describe('Provider System', () => {
     it('should initialize with configured providers', async () => {
       await providerManager.initialize();
       const providers = await providerManager.getProviders();
-      
+
       expect(providers).toHaveLength(1);
       expect(providers[0].id).toBe('openai');
     });
 
     it('should generate variants from all providers', async () => {
       await providerManager.initialize();
-      
+
       // Mock successful API response
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{
-            message: {
-              content: '```javascript\nfunction optimized() { return 42; }\n```'
-            }
-          }],
+          choices: [
+            {
+              message: {
+                content: '```javascript\nfunction optimized() { return 42; }\n```',
+              },
+            },
+          ],
           usage: {
             prompt_tokens: 100,
             completion_tokens: 50,
-          }
+          },
         }),
       } as any);
 
@@ -70,32 +72,30 @@ describe('Provider System', () => {
 
   describe('OpenAI Provider', () => {
     it('should initialize with API key', async () => {
-      await expect(
-        openaiProvider.initialize({ apiKey: 'test-key' })
-      ).resolves.not.toThrow();
+      await expect(openaiProvider.initialize({ apiKey: 'test-key' })).resolves.not.toThrow();
     });
 
     it('should throw without API key', async () => {
-      await expect(
-        openaiProvider.initialize({})
-      ).rejects.toThrow('OpenAI API key is required');
+      await expect(openaiProvider.initialize({})).rejects.toThrow('OpenAI API key is required');
     });
 
     it('should generate variant', async () => {
       await openaiProvider.initialize({ apiKey: 'test-key' });
-      
+
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{
-            message: {
-              content: 'function optimized() { return 42; }'
-            }
-          }],
+          choices: [
+            {
+              message: {
+                content: 'function optimized() { return 42; }',
+              },
+            },
+          ],
           usage: {
             prompt_tokens: 150,
             completion_tokens: 75,
-          }
+          },
         }),
       } as any);
 
@@ -114,15 +114,18 @@ describe('Provider System', () => {
 
     it('should extract code from markdown blocks', async () => {
       await openaiProvider.initialize({ apiKey: 'test-key' });
-      
+
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          choices: [{
-            message: {
-              content: 'Here is the optimized code:\n\n```javascript\nfunction fast() { return 100; }\n```\n\nThis is faster.'
-            }
-          }],
+          choices: [
+            {
+              message: {
+                content:
+                  'Here is the optimized code:\n\n```javascript\nfunction fast() { return 100; }\n```\n\nThis is faster.',
+              },
+            },
+          ],
           usage: { prompt_tokens: 100, completion_tokens: 50 },
         }),
       } as any);
@@ -148,7 +151,7 @@ describe('Provider System', () => {
 
     it('should check availability', async () => {
       await openaiProvider.initialize({ apiKey: 'test-key' });
-      
+
       vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
       } as any);

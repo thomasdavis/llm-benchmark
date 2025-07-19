@@ -22,7 +22,7 @@ export class ProviderManager {
   async initialize(): Promise<void> {
     for (const providerSpec of this.config.providers) {
       const [providerId, model] = providerSpec.split(':');
-      
+
       try {
         const provider = await this.loadProvider(providerId);
         await provider.initialize({
@@ -30,7 +30,7 @@ export class ProviderManager {
           apiBase: process.env[`${providerId.toUpperCase()}_API_BASE`],
           organization: process.env[`${providerId.toUpperCase()}_ORGANIZATION`],
         });
-        
+
         this.providers.set(providerSpec, provider);
       } catch (error) {
         console.warn(`Failed to load provider ${providerSpec}:`, error);
@@ -71,16 +71,16 @@ export class ProviderManager {
     signature: Signature;
     language: string;
     onProgress?: (provider: string, status: string) => void;
-  }): Promise<Array<GenerationResult & { provider: string; model: string }>>{
+  }): Promise<Array<GenerationResult & { provider: string; model: string }>> {
     const results: Array<GenerationResult & { provider: string; model: string }> = [];
 
     const tasks = Array.from(this.providers.entries()).map(([spec, provider]) => {
       const [providerId, model] = spec.split(':');
-      
+
       return this.limit(async () => {
         try {
           params.onProgress?.(spec, 'generating');
-          
+
           const result = await provider.generateVariant({
             systemPrompt: this.buildSystemPrompt(params.language),
             userPrompt: this.buildUserPrompt(params.code, params.signature),
@@ -90,7 +90,7 @@ export class ProviderManager {
           });
 
           params.onProgress?.(spec, 'completed');
-          
+
           return {
             ...result,
             provider: providerId,
@@ -104,7 +104,7 @@ export class ProviderManager {
     });
 
     const settled = await Promise.allSettled(tasks);
-    
+
     for (const result of settled) {
       if (result.status === 'fulfilled') {
         results.push(result.value);
@@ -120,7 +120,9 @@ export class ProviderManager {
    * Build system prompt for code optimization
    */
   private buildSystemPrompt(language: string): string {
-    const basePrompt = this.config.basePrompt || `You are a world-class performance engineer specializing in ${language} optimization.
+    const basePrompt =
+      this.config.basePrompt ||
+      `You are a world-class performance engineer specializing in ${language} optimization.
 
 Your task is to optimize the given function for maximum performance while maintaining exact functional equivalence.
 

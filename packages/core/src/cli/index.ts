@@ -15,8 +15,6 @@ import { promptCommand } from './commands/prompt.js';
 import { runCommand } from './commands/run.js';
 import { validateCommand } from './commands/validate.js';
 
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageJsonPath = join(__dirname, '../../package.json');
@@ -55,17 +53,19 @@ program
   .argument('[function]', 'specific function to target')
   .action(async (file: string, targetFunction: string | undefined, options: unknown) => {
     try {
-      const validatedOptions = z.object({
-        config: z.string(),
-        dotenv: z.string().optional(),
-        providers: z.array(z.string()).optional(),
-        overwrite: z.boolean(),
-        runs: z.number().optional(),
-        ci: z.boolean(),
-        color: z.boolean(),
-        debug: z.boolean(),
-        quiet: z.boolean(),
-      }).parse(options);
+      const validatedOptions = z
+        .object({
+          config: z.string(),
+          dotenv: z.string().optional(),
+          providers: z.array(z.string()).optional(),
+          overwrite: z.boolean(),
+          runs: z.number().optional(),
+          ci: z.boolean(),
+          color: z.boolean(),
+          debug: z.boolean(),
+          quiet: z.boolean(),
+        })
+        .parse(options);
 
       await runCommand(file, targetFunction, validatedOptions);
     } catch (error) {

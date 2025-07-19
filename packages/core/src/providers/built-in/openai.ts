@@ -19,7 +19,7 @@ export const openaiProvider: ProviderAdapter = {
     }
 
     // Store config for later use
-    (this )._config = config;
+    this._config = config;
   },
 
   async generateVariant(params: {
@@ -30,7 +30,7 @@ export const openaiProvider: ProviderAdapter = {
     config?: ModelConfig;
   }): Promise<GenerationResult> {
     const startTime = Date.now();
-    const apiConfig = (this )._config;
+    const apiConfig = this._config;
 
     const response = await fetch(
       `${apiConfig.apiBase || 'https://api.openai.com'}/v1/chat/completions`,
@@ -38,7 +38,7 @@ export const openaiProvider: ProviderAdapter = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiConfig.apiKey}`,
+          Authorization: `Bearer ${apiConfig.apiKey}`,
           ...(apiConfig.organization && { 'OpenAI-Organization': apiConfig.organization }),
         },
         body: JSON.stringify({
@@ -54,7 +54,7 @@ export const openaiProvider: ProviderAdapter = {
           presence_penalty: params.config?.presencePenalty ?? 0,
           stop: params.config?.stopSequences,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -62,7 +62,7 @@ export const openaiProvider: ProviderAdapter = {
       throw new Error(`OpenAI API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
     const latencyMs = Date.now() - startTime;
 
     // Extract code from response
@@ -78,7 +78,7 @@ export const openaiProvider: ProviderAdapter = {
         costUsd: this.calculateCost(
           data.usage.prompt_tokens,
           data.usage.completion_tokens,
-          params.model
+          params.model,
         ),
         model: params.model,
         provider: this.id,
@@ -101,15 +101,12 @@ export const openaiProvider: ProviderAdapter = {
 
   async isAvailable(): Promise<boolean> {
     try {
-      const apiConfig = (this )._config;
-      const response = await fetch(
-        `${apiConfig.apiBase || 'https://api.openai.com'}/v1/models`,
-        {
-          headers: {
-            'Authorization': `Bearer ${apiConfig.apiKey}`,
-          },
-        }
-      );
+      const apiConfig = this._config;
+      const response = await fetch(`${apiConfig.apiBase || 'https://api.openai.com'}/v1/models`, {
+        headers: {
+          Authorization: `Bearer ${apiConfig.apiKey}`,
+        },
+      });
       return response.ok;
     } catch {
       return false;
@@ -127,11 +124,7 @@ export const openaiProvider: ProviderAdapter = {
     return content.trim();
   },
 
-  calculateCost(
-    promptTokens: number,
-    completionTokens: number,
-    model: string
-  ): number {
+  calculateCost(promptTokens: number, completionTokens: number, model: string): number {
     const pricing: Record<string, { prompt: number; completion: number }> = {
       'gpt-4o': { prompt: 0.005, completion: 0.015 },
       'gpt-4-turbo': { prompt: 0.01, completion: 0.03 },
@@ -140,7 +133,7 @@ export const openaiProvider: ProviderAdapter = {
     };
 
     const modelPricing = pricing[model] || pricing['gpt-4'];
-    
+
     return (
       (promptTokens / 1000) * modelPricing.prompt +
       (completionTokens / 1000) * modelPricing.completion

@@ -22,7 +22,7 @@ describe('Plugin System', () => {
     it('should initialize with configured plugins', async () => {
       await pluginManager.initialize();
       const plugins = pluginManager.getPlugins();
-      
+
       expect(plugins).toHaveLength(1);
       expect(plugins[0].id).toBe('js');
     });
@@ -30,7 +30,7 @@ describe('Plugin System', () => {
     it('should detect plugin for JavaScript file', async () => {
       await pluginManager.initialize();
       const plugin = await pluginManager.detectPlugin('test.js');
-      
+
       expect(plugin).toBeDefined();
       expect(plugin?.id).toBe('js');
     });
@@ -38,7 +38,7 @@ describe('Plugin System', () => {
     it('should return null for unsupported file', async () => {
       await pluginManager.initialize();
       const plugin = await pluginManager.detectPlugin('test.unknown');
-      
+
       expect(plugin).toBeNull();
     });
   });
@@ -61,7 +61,7 @@ describe('Plugin System', () => {
       }));
 
       const result = await jsPlugin.extract('test.js');
-      
+
       expect(result.signature.name).toBe('default');
       expect(result.signature.params).toHaveLength(2);
       expect(result.code).toContain('function testFunc');
@@ -77,7 +77,7 @@ describe('Plugin System', () => {
       }));
 
       const result = await jsPlugin.extract('test.js', 'namedFunc');
-      
+
       expect(result.signature.name).toBe('namedFunc');
       expect(result.signature.params).toHaveLength(3);
       expect(result.signature.params[2].optional).toBe(true);
@@ -86,7 +86,7 @@ describe('Plugin System', () => {
     it('should format code', async () => {
       const code = 'function test() { return 1; }';
       const formatted = await jsPlugin.format(code);
-      
+
       expect(formatted).toBe(code); // Basic implementation returns as-is
     });
 
@@ -102,7 +102,7 @@ describe('Plugin System', () => {
       };
 
       const inputs = await jsPlugin.generateTestInputs!(signature, 5);
-      
+
       expect(inputs).toHaveLength(5);
       expect(inputs[0]).toHaveLength(3);
       expect(typeof inputs[0][0]).toBe('number');

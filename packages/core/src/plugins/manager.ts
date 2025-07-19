@@ -20,7 +20,7 @@ export class PluginManager {
       try {
         const plugin = await this.loadPlugin(pluginId);
         this.plugins.set(pluginId, plugin);
-        
+
         // Map extensions to plugins
         for (const ext of plugin.extensions) {
           this.extensionMap.set(ext, plugin);
@@ -61,7 +61,7 @@ export class PluginManager {
    */
   async detectPlugin(filePath: string): Promise<LangPlugin | null> {
     const ext = extname(filePath).toLowerCase();
-    
+
     // Check extension map
     const plugin = this.extensionMap.get(ext);
     if (plugin) {

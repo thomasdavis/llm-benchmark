@@ -6,7 +6,13 @@ import * as Benchmark from 'benchmark';
 import deepEqual from 'deep-equal';
 import { execaNode } from 'execa';
 
-import type { LangPlugin, Signature, TestCase, BenchOptions, BenchResult } from '../../types/plugin.js';
+import type {
+  LangPlugin,
+  Signature,
+  TestCase,
+  BenchOptions,
+  BenchResult,
+} from '../../types/plugin.js';
 
 /**
  * JavaScript/TypeScript language plugin
@@ -20,33 +26,44 @@ export const jsPlugin: LangPlugin = {
     return this.extensions.includes(ext);
   },
 
-  async extract(filePath: string, targetFunction?: string): Promise<{
+  async extract(
+    filePath: string,
+    targetFunction?: string,
+  ): Promise<{
     code: string;
     signature: Signature;
     dependencies?: string[];
   }> {
     const content = await readFile(filePath, 'utf-8');
-    
+
     // Simple extraction - look for export default or named function
     let functionMatch: RegExpMatchArray | null = null;
     const functionName = targetFunction || 'default';
-    
+
     if (targetFunction) {
       // Look for specific function
       const patterns = [
-        new RegExp(`export\\s+(?:async\\s+)?function\\s+${targetFunction}\\s*\\([^)]*\\)\\s*{`, 's'),
-        new RegExp(`export\\s+const\\s+${targetFunction}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>`, 's'),
+        new RegExp(
+          `export\\s+(?:async\\s+)?function\\s+${targetFunction}\\s*\\([^)]*\\)\\s*{`,
+          's',
+        ),
+        new RegExp(
+          `export\\s+const\\s+${targetFunction}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>`,
+          's',
+        ),
         new RegExp(`(?:async\\s+)?function\\s+${targetFunction}\\s*\\([^)]*\\)\\s*{`, 's'),
         new RegExp(`const\\s+${targetFunction}\\s*=\\s*(?:async\\s*)?\\([^)]*\\)\\s*=>`, 's'),
       ];
-      
+
       for (const pattern of patterns) {
         functionMatch = content.match(pattern);
         if (functionMatch) break;
       }
     } else {
       // Look for default export
-      functionMatch = content.match(/export\s+default\s+(?:async\s+)?(?:function\s*)?(?:\w+\s*)?\([^)]*\)\s*{/s);
+      functionMatch = content.match(
+        /export\s+default\s+(?:async\s+)?(?:function\s*)?(?:\w+\s*)?\([^)]*\)\s*{/s,
+      );
       if (!functionMatch) {
         functionMatch = content.match(/export\s+default\s+(?:async\s*)?(?:\([^)]*\)|[^=]+)\s*=>/s);
       }
@@ -62,11 +79,11 @@ export const jsPlugin: LangPlugin = {
     let braceCount = 0;
     let inString = false;
     let stringChar = '';
-    
+
     for (let i = startIndex; i < content.length; i++) {
       const char = content[i];
       const prevChar = i > 0 ? content[i - 1] : '';
-      
+
       if (!inString) {
         if ((char === '"' || char === "'" || char === '`') && prevChar !== '\\') {
           inString = true;
@@ -99,9 +116,9 @@ export const jsPlugin: LangPlugin = {
     // Extract parameters
     const paramMatch = code.match(/\(([^)]*)\)/);
     if (paramMatch && paramMatch[1].trim()) {
-      signature.params = paramMatch[1].split(',').map(param => {
+      signature.params = paramMatch[1].split(',').map((param) => {
         const trimmed = param.trim();
-        const [name, defaultValue] = trimmed.split('=').map(s => s.trim());
+        const [name, defaultValue] = trimmed.split('=').map((s) => s.trim());
         return {
           name: name.replace(/[?:].*/g, '').trim(),
           optional: name.includes('?') || defaultValue !== undefined,
@@ -112,7 +129,7 @@ export const jsPlugin: LangPlugin = {
 
     // Extract dependencies (imports)
     const imports = content.matchAll(/import\s+(?:{[^}]+}|[\w\s,]+)\s+from\s+['"]([^'"]+)['"]/g);
-    const dependencies = Array.from(imports).map(match => match[1]);
+    const dependencies = Array.from(imports).map((match) => match[1]);
 
     return { code, signature, dependencies };
   },
@@ -128,7 +145,10 @@ export const jsPlugin: LangPlugin = {
     return;
   },
 
-  async validate(testCases: TestCase[], variantPath: string): Promise<{
+  async validate(
+    testCases: TestCase[],
+    variantPath: string,
+  ): Promise<{
     passed: boolean;
     results: Array<{
       caseId: string;
@@ -204,7 +224,7 @@ export const jsPlugin: LangPlugin = {
 
     // Load all functions
     const functions: Map<string, Function> = new Map();
-    
+
     for (const variantPath of [options.baseline, ...options.variants]) {
       try {
         const module = await import(variantPath);
@@ -247,7 +267,7 @@ export const jsPlugin: LangPlugin = {
       suite
         .on('cycle', (event: any) => {
           const bench = event.target;
-          
+
           if (bench.name === basename(options.baseline)) {
             baselineOps = bench.hz;
           }
@@ -280,10 +300,10 @@ export const jsPlugin: LangPlugin = {
   async generateTestInputs(signature: Signature, count: number): Promise<unknown[][]> {
     // Simple test input generation
     const inputs: unknown[][] = [];
-    
+
     for (let i = 0; i < count; i++) {
       const args: unknown[] = [];
-      
+
       for (const param of signature.params) {
         // Generate based on parameter name hints
         if (param.name.includes('num') || param.name.includes('count')) {
@@ -301,10 +321,10 @@ export const jsPlugin: LangPlugin = {
           args.push(Math.floor(Math.random() * 100));
         }
       }
-      
+
       inputs.push(args);
     }
-    
+
     return inputs;
   },
 };

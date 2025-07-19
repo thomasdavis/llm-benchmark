@@ -7,7 +7,7 @@ export * from './types/index.js';
 export { PluginManager } from './plugins/manager.js';
 export { default as jsPlugin } from './plugins/built-in/js.js';
 
-// Provider system  
+// Provider system
 export { ProviderManager } from './providers/manager.js';
 export { default as openaiProvider } from './providers/built-in/openai.js';
 

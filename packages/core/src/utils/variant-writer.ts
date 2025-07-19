@@ -12,38 +12,30 @@ export class VariantWriter {
   /**
    * Get variant file path
    */
-  getVariantPath(
-    originalPath: string,
-    provider: string,
-    model: string
-  ): string {
+  getVariantPath(originalPath: string, provider: string, model: string): string {
     const dir = dirname(originalPath);
     const ext = extname(originalPath);
     const base = basename(originalPath, ext);
-    
+
     // Clean model name for filename
     const cleanModel = model.replace(/[^a-z0-9-]/gi, '_');
-    
+
     return join(dir, `${base}.${provider}.${cleanModel}${ext}`);
   }
 
   /**
    * Write variant to file
    */
-  async write(
-    outputPath: string,
-    code: string,
-    metadata?: any
-  ): Promise<void> {
+  async write(outputPath: string, code: string, metadata?: any): Promise<void> {
     await mkdir(dirname(outputPath), { recursive: true });
-    
+
     // Add metadata as comment if available
     let content = code;
     if (metadata) {
       const comment = this.generateMetadataComment(metadata);
       content = comment + '\n\n' + code;
     }
-    
+
     await writeFile(outputPath, content, 'utf-8');
   }
 
@@ -71,15 +63,15 @@ export class VariantWriter {
       case 'c':
       case 'cpp':
         return `/**\n * ${lines.join('\n * ')}\n */`;
-      
+
       case 'py':
       case 'rb':
         return `"""\n${lines.join('\n')}\n"""`;
-      
+
       case 'sh':
       case 'bash':
-        return lines.map(line => `# ${line}`).join('\n');
-      
+        return lines.map((line) => `# ${line}`).join('\n');
+
       default:
         return `/* ${lines.join(' | ')} */`;
     }

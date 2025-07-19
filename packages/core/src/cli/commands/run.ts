@@ -19,7 +19,7 @@ import { TUI } from '../tui/index.js';
 export async function runCommand(
   file: string,
   targetFunction: string | undefined,
-  options: any
+  options: any,
 ): Promise<void> {
   const startTime = Date.now();
   const filePath = resolve(file);
@@ -32,17 +32,17 @@ export async function runCommand(
 
   try {
     if (spinner) spinner.start('Loading configuration...');
-    
+
     // Load configuration
     const config = await loadConfig(options.config, options);
-    
+
     // Initialize managers
     const pluginManager = new PluginManager(config);
     const providerManager = new ProviderManager(config);
-    
+
     await pluginManager.initialize();
     await providerManager.initialize();
-    
+
     if (spinner) spinner.succeed('Configuration loaded');
 
     // Detect language plugin
@@ -75,7 +75,7 @@ export async function runCommand(
         }
       },
     });
-    
+
     if (spinner) spinner.succeed(`Generated ${variants.length} variants`);
 
     // Write variant files
@@ -88,10 +88,12 @@ export async function runCommand(
     if (spinner) spinner.start('Validating variants...');
     const validationRunner = new ValidationRunner(config, plugin);
     const validationResults = await validationRunner.validateAll(variants, filePath);
-    
-    const validVariants = validationResults.filter(r => r.passed);
+
+    const validVariants = validationResults.filter((r) => r.passed);
     if (spinner) {
-      spinner.succeed(`Validation complete: ${validVariants.length}/${variants.length} variants valid`);
+      spinner.succeed(
+        `Validation complete: ${validVariants.length}/${variants.length} variants valid`,
+      );
     }
 
     // Benchmark valid variants
@@ -99,7 +101,7 @@ export async function runCommand(
       if (spinner) spinner.start('Running benchmarks...');
       const benchmarkRunner = new BenchmarkRunner(config, plugin);
       const benchResults = await benchmarkRunner.runAll(validVariants, filePath);
-      
+
       if (spinner) spinner.succeed('Benchmarks complete');
 
       // Prepare results
@@ -141,7 +143,9 @@ export async function runCommand(
         console.log(`Valid variants: ${results.summary.validVariants}`);
         if (results.summary.fastestVariant) {
           console.log(`Fastest: ${chalk.cyan(results.summary.fastestVariant)}`);
-          console.log(`Improvement: ${chalk.green(`+${results.summary.maxImprovement?.toFixed(1)}%`)}`);
+          console.log(
+            `Improvement: ${chalk.green(`+${results.summary.maxImprovement?.toFixed(1)}%`)}`,
+          );
         }
         console.log(`Total cost: ${chalk.yellow(`$${results.summary.totalCostUsd.toFixed(4)}`)}`);
         console.log(`Results saved to: ${chalk.dim(writer.getOutputPath())}`);

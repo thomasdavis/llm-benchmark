@@ -25,26 +25,26 @@ export class ResultsWriter {
   async write(results: BenchmarkResults): Promise<void> {
     const format = this.config.output?.format || 'json';
     const outputPath = this.getOutputPath();
-    
+
     await mkdir(dirname(outputPath), { recursive: true });
 
     switch (format) {
       case 'json':
         await this.writeJSON(outputPath, results);
         break;
-      
+
       case 'junit':
         await this.writeJUnit(outputPath, results);
         break;
-      
+
       case 'csv':
         await this.writeCSV(outputPath, results);
         break;
-      
+
       case 'html':
         await this.writeHTML(outputPath, results);
         break;
-      
+
       default:
         throw new Error(`Unsupported output format: ${format}`);
     }
@@ -54,11 +54,7 @@ export class ResultsWriter {
    * Write JSON format
    */
   private async writeJSON(path: string, results: BenchmarkResults): Promise<void> {
-    await writeFile(
-      path,
-      JSON.stringify(results, null, 2),
-      'utf-8'
-    );
+    await writeFile(path, JSON.stringify(results, null, 2), 'utf-8');
   }
 
   /**
@@ -66,17 +62,29 @@ export class ResultsWriter {
    */
   private async writeJUnit(path: string, results: BenchmarkResults): Promise<void> {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="llm-benchmark" tests="${results.variants.length}" time="${results.summary.totalDurationMs / 1000}">
+<testsuites name="llm-benchmark" tests="${results.variants.length}" time="${
+      results.summary.totalDurationMs / 1000
+    }">
   <testsuite name="${results.targetFunction}" tests="${results.variants.length}">
-    ${results.variants.map(variant => `
-    <testcase name="${variant.provider}.${variant.model}" classname="${results.targetFunction}" time="${variant.generation.latencyMs / 1000}">
-      ${!variant.valid ? `<failure message="Validation failed">${variant.error || 'Unknown error'}</failure>` : ''}
+    ${results.variants
+      .map(
+        (variant) => `
+    <testcase name="${variant.provider}.${variant.model}" classname="${
+      results.targetFunction
+    }" time="${variant.generation.latencyMs / 1000}">
+      ${
+        !variant.valid
+          ? `<failure message="Validation failed">${variant.error || 'Unknown error'}</failure>`
+          : ''
+      }
       <system-out>
         Ops/sec: ${variant.benchmark?.opsPerSec || 'N/A'}
         Improvement: ${variant.benchmark?.improvement || 0}%
         Cost: $${variant.generation.costUsd}
       </system-out>
-    </testcase>`).join('')}
+    </testcase>`,
+      )
+      .join('')}
   </testsuite>
 </testsuites>`;
 
@@ -87,7 +95,7 @@ export class ResultsWriter {
    * Write CSV format
    */
   private async writeCSV(path: string, results: BenchmarkResults): Promise<void> {
-    const rows = results.variants.map(variant => ({
+    const rows = results.variants.map((variant) => ({
       provider: variant.provider,
       model: variant.model,
       valid: variant.valid,
@@ -140,7 +148,9 @@ export class ResultsWriter {
     <p><strong>Total Variants:</strong> ${results.summary.totalVariants}</p>
     <p><strong>Valid Variants:</strong> ${results.summary.validVariants}</p>
     <p><strong>Fastest:</strong> ${results.summary.fastestVariant || 'N/A'} 
-       ${results.summary.maxImprovement ? `(+${results.summary.maxImprovement.toFixed(1)}%)` : ''}</p>
+       ${
+         results.summary.maxImprovement ? `(+${results.summary.maxImprovement.toFixed(1)}%)` : ''
+       }</p>
     <p><strong>Total Cost:</strong> $${results.summary.totalCostUsd.toFixed(4)}</p>
     <p><strong>Duration:</strong> ${(results.summary.totalDurationMs / 1000).toFixed(1)}s</p>
   </div>
@@ -160,7 +170,9 @@ export class ResultsWriter {
       </tr>
     </thead>
     <tbody>
-      ${results.variants.map((variant, i) => `
+      ${results.variants
+        .map(
+          (variant, i) => `
       <tr class="${i === 0 && variant.valid ? 'fastest' : ''}">
         <td>${variant.provider}</td>
         <td>${variant.model}</td>
@@ -174,7 +186,9 @@ export class ResultsWriter {
         <td>${variant.benchmark?.p95?.toFixed(3) || '-'}</td>
         <td>${variant.benchmark?.stdDev ? `±${variant.benchmark.stdDev.toFixed(1)}%` : '-'}</td>
         <td>$${variant.generation.costUsd.toFixed(4)}</td>
-      </tr>`).join('')}
+      </tr>`,
+        )
+        .join('')}
     </tbody>
   </table>
 

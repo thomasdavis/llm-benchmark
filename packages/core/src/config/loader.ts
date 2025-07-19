@@ -6,16 +6,13 @@ import chalk from 'chalk';
 import { config as loadDotenv } from 'dotenv';
 import yaml from 'js-yaml';
 
-import type { Config} from '../types/config.js';
+import type { Config } from '../types/config.js';
 import { ConfigSchema } from '../types/config.js';
 
 /**
  * Load and validate configuration
  */
-export async function loadConfig(
-  configPath: string,
-  cliOptions: any
-): Promise<Config> {
+export async function loadConfig(configPath: string, cliOptions: any): Promise<Config> {
   // Load environment variables
   if (cliOptions.dotenv && existsSync(cliOptions.dotenv)) {
     loadDotenv({ path: cliOptions.dotenv });
@@ -29,7 +26,7 @@ export async function loadConfig(
 
   if (existsSync(resolvedPath)) {
     const content = await readFile(resolvedPath, 'utf-8');
-    
+
     if (resolvedPath.endsWith('.yaml') || resolvedPath.endsWith('.yml')) {
       rawConfig = yaml.load(content) as any;
     } else if (resolvedPath.endsWith('.json')) {
@@ -46,11 +43,11 @@ export async function loadConfig(
   const mergedConfig = {
     ...rawConfig,
     ...(cliOptions.providers && { providers: cliOptions.providers }),
-    ...(cliOptions.runs && { 
-      bench: { 
-        ...rawConfig.bench, 
-        runs: cliOptions.runs 
-      } 
+    ...(cliOptions.runs && {
+      bench: {
+        ...rawConfig.bench,
+        runs: cliOptions.runs,
+      },
     }),
     ...(cliOptions.ci !== undefined && { ci: cliOptions.ci }),
   };
@@ -66,10 +63,10 @@ export async function loadConfig(
   // Validate configuration
   try {
     const validated = ConfigSchema.parse(mergedConfig);
-    
+
     // Check for required environment variables
     validateEnvironment(validated);
-    
+
     return validated;
   } catch (error) {
     if (error instanceof Error) {
@@ -87,7 +84,7 @@ function validateEnvironment(config: Config): void {
 
   for (const provider of config.providers) {
     const [providerId] = provider.split(':');
-    
+
     switch (providerId) {
       case 'openai':
         if (!process.env.OPENAI_API_KEY) {
@@ -115,7 +112,7 @@ function validateEnvironment(config: Config): void {
 
   if (missingVars.length > 0) {
     console.error(chalk.red('\n❌ Missing required environment variables:'));
-    missingVars.forEach(varName => {
+    missingVars.forEach((varName) => {
       console.error(chalk.red(`   - ${varName}`));
     });
     console.error(chalk.yellow('\n💡 Set these in your .env file or environment'));

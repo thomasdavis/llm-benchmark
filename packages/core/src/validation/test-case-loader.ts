@@ -29,13 +29,13 @@ export class TestCaseLoader {
       join(baseDir, '*.test.yml'),
       join(baseDir, '__tests__', '*.json'),
       join(baseDir, '__tests__', '*.yaml'),
-    ].filter(Boolean) ;
+    ].filter(Boolean);
 
     // Simple implementation - check for test files in the directory
     const files: string[] = [];
     const fs = await import('fs');
     const dirFiles = fs.readdirSync(baseDir);
-    
+
     for (const pattern of patterns) {
       if (pattern.includes('*')) {
         // Handle wildcards
@@ -43,9 +43,9 @@ export class TestCaseLoader {
         const searchDir = filePattern.includes('/') ? dirname(filePattern) : baseDir;
         const fileRegex = basename(filePattern);
         const regex = new RegExp('^' + fileRegex.replace(/\*/g, '.*').replace(/\./g, '\\.') + '$');
-        
+
         if (searchDir === baseDir) {
-          files.push(...dirFiles.filter(f => regex.test(f)).map(f => join(baseDir, f)));
+          files.push(...dirFiles.filter((f) => regex.test(f)).map((f) => join(baseDir, f)));
         }
       } else if (existsSync(pattern)) {
         files.push(pattern);
@@ -84,9 +84,7 @@ export class TestCaseLoader {
     if (Array.isArray(data)) {
       return data.map((item, index) => this.normalizeTestCase(item, index));
     } else if (data.cases && Array.isArray(data.cases)) {
-      return data.cases.map((item: any, index: number) => 
-        this.normalizeTestCase(item, index)
-      );
+      return data.cases.map((item: any, index: number) => this.normalizeTestCase(item, index));
     } else {
       throw new Error(`Invalid test case format in: ${filePath}`);
     }

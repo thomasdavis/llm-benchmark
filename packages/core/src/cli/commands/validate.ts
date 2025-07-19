@@ -16,7 +16,7 @@ import { ValidationRunner } from '../../validation/runner.js';
 export async function validateCommand(
   file: string,
   targetFunction: string | undefined,
-  options: any
+  options: any,
 ): Promise<void> {
   const filePath = resolve(file);
 
@@ -25,17 +25,17 @@ export async function validateCommand(
   }
 
   const spinner = ora();
-  
+
   try {
     spinner.start('Loading configuration...');
-    
+
     // Load configuration
     const config = await loadConfig(options.config, options);
-    
+
     // Initialize plugin manager
     const pluginManager = new PluginManager(config);
     await pluginManager.initialize();
-    
+
     spinner.succeed('Configuration loaded');
 
     // Detect language plugin
@@ -48,13 +48,13 @@ export async function validateCommand(
     spinner.start('Finding variant files...');
     const variantFinder = new VariantFinder();
     const variantFiles = await variantFinder.findVariants(filePath);
-    
+
     if (variantFiles.length === 0) {
       spinner.fail('No variant files found');
       console.log(chalk.yellow('\n⚠️  No variants found. Run "llm-benchmark generate" first.'));
       return;
     }
-    
+
     spinner.succeed(`Found ${variantFiles.length} variant files`);
 
     // Extract original function for comparison
@@ -63,8 +63,12 @@ export async function validateCommand(
     // Run validation
     spinner.start('Running validation...');
     const validationRunner = new ValidationRunner(config, plugin);
-    const results = await validationRunner.validateFiles(variantFiles, filePath, extraction.signature);
-    
+    const results = await validationRunner.validateFiles(
+      variantFiles,
+      filePath,
+      extraction.signature,
+    );
+
     spinner.succeed('Validation complete');
 
     // Print results
@@ -77,19 +81,19 @@ export async function validateCommand(
     for (const result of results) {
       const icon = result.passed ? '✅' : '❌';
       const status = result.passed ? chalk.green('PASSED') : chalk.red('FAILED');
-      
+
       console.log(`\n${icon} ${chalk.bold(result.variant)}: ${status}`);
       console.log(`   Cases: ${result.passedCases}/${result.totalCases} passed`);
-      
-      if (!result.passed && result.results.some(r => !r.passed)) {
+
+      if (!result.passed && result.results.some((r) => !r.passed)) {
         console.log(chalk.dim('\n   Failed cases:'));
-        
-        for (const testResult of result.results.filter(r => !r.passed)) {
+
+        for (const testResult of result.results.filter((r) => !r.passed)) {
           console.log(chalk.red(`\n   Case ${testResult.caseId}:`));
           console.log(chalk.dim(`     Input: ${JSON.stringify(testResult.input)}`));
           console.log(chalk.dim(`     Expected: ${JSON.stringify(testResult.expected)}`));
           console.log(chalk.dim(`     Actual: ${JSON.stringify(testResult.actual)}`));
-          
+
           if (testResult.error) {
             console.log(chalk.red(`     Error: ${testResult.error}`));
           }
@@ -99,9 +103,9 @@ export async function validateCommand(
             const expectedStr = JSON.stringify(testResult.expected, null, 2);
             const actualStr = JSON.stringify(testResult.actual, null, 2);
             const diff = diffLines(expectedStr, actualStr);
-            
+
             console.log(chalk.dim('\n     Diff:'));
-            diff.forEach(part => {
+            diff.forEach((part) => {
               const color = part.added ? chalk.green : part.removed ? chalk.red : chalk.dim;
               process.stdout.write(color(part.value));
             });
@@ -122,7 +126,11 @@ export async function validateCommand(
 
     if (totalPassed > 0) {
       console.log(chalk.cyan('\n💡 Next step:'));
-      console.log(`  Run ${chalk.bold('llm-benchmark bench')} to benchmark the ${totalPassed} valid variant${totalPassed > 1 ? 's' : ''}`);
+      console.log(
+        `  Run ${chalk.bold('llm-benchmark bench')} to benchmark the ${totalPassed} valid variant${
+          totalPassed > 1 ? 's' : ''
+        }`,
+      );
     }
 
     // Exit with error code if validation failed

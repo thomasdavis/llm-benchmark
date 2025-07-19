@@ -58,10 +58,7 @@ export interface ProviderAdapter {
   /**
    * Estimate cost for a prompt
    */
-  estimateCost(params: {
-    promptTokens: number;
-    model: string;
-  }): number;
+  estimateCost(params: { promptTokens: number; model: string }): number;
 
   /**
    * Check if the provider is available

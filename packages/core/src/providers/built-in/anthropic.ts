@@ -9,16 +9,13 @@ export const anthropicProvider: ProviderAdapter = {
   name: 'Anthropic',
   models: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku', 'claude-2.1'],
 
-  async initialize(config: {
-    apiKey?: string;
-    apiBase?: string;
-  }): Promise<void> {
+  async initialize(config: { apiKey?: string; apiBase?: string }): Promise<void> {
     if (!config.apiKey) {
       throw new Error('Anthropic API key is required');
     }
 
     // Store config for later use
-    (this )._config = config;
+    this._config = config;
   },
 
   async generateVariant(params: {
@@ -29,7 +26,7 @@ export const anthropicProvider: ProviderAdapter = {
     config?: ModelConfig;
   }): Promise<GenerationResult> {
     const startTime = Date.now();
-    const apiConfig = (this )._config;
+    const apiConfig = this._config;
 
     const response = await fetch(
       `${apiConfig.apiBase || 'https://api.anthropic.com'}/v1/messages`,
@@ -54,7 +51,7 @@ export const anthropicProvider: ProviderAdapter = {
           top_p: params.config?.topP ?? 1,
           stop_sequences: params.config?.stopSequences,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -62,7 +59,7 @@ export const anthropicProvider: ProviderAdapter = {
       throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
     const latencyMs = Date.now() - startTime;
 
     // Extract code from response
@@ -100,7 +97,7 @@ export const anthropicProvider: ProviderAdapter = {
 
   async isAvailable(): Promise<boolean> {
     try {
-      const apiConfig = (this )._config;
+      const apiConfig = this._config;
       const response = await fetch(
         `${apiConfig.apiBase || 'https://api.anthropic.com'}/v1/messages`,
         {
@@ -114,7 +111,7 @@ export const anthropicProvider: ProviderAdapter = {
             messages: [{ role: 'user', content: 'test' }],
             max_tokens: 1,
           }),
-        }
+        },
       );
       return response.status !== 401;
     } catch {
@@ -139,11 +136,7 @@ export const anthropicProvider: ProviderAdapter = {
     return Math.ceil(text.length / 4);
   },
 
-  calculateCost(
-    promptTokens: number,
-    completionTokens: number,
-    model: string
-  ): number {
+  calculateCost(promptTokens: number, completionTokens: number, model: string): number {
     const pricing: Record<string, { prompt: number; completion: number }> = {
       'claude-3-opus': { prompt: 0.015, completion: 0.075 },
       'claude-3-sonnet': { prompt: 0.003, completion: 0.015 },
@@ -152,7 +145,7 @@ export const anthropicProvider: ProviderAdapter = {
     };
 
     const modelPricing = pricing[model] || pricing['claude-3-sonnet'];
-    
+
     return (
       (promptTokens / 1000) * modelPricing.prompt +
       (completionTokens / 1000) * modelPricing.completion

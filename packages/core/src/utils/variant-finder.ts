@@ -13,7 +13,7 @@ export class VariantFinder {
     const dir = dirname(sourceFile);
     const ext = extname(sourceFile);
     const base = basename(sourceFile, ext);
-    
+
     // Look for variant files with pattern: name.provider.model.ext
     const pattern = `${base}.*.*.${ext.slice(1)}`;
     const files = await globby(pattern, {
@@ -22,7 +22,7 @@ export class VariantFinder {
     });
 
     // Filter out non-variant files
-    return files.filter(file => {
+    return files.filter((file) => {
       const name = basename(file, ext);
       const parts = name.split('.');
       // Should have at least 3 parts: original.provider.model
@@ -40,7 +40,7 @@ export class VariantFinder {
     const ext = extname(filePath);
     const name = basename(filePath, ext);
     const parts = name.split('.');
-    
+
     if (parts.length < 3) {
       return null;
     }

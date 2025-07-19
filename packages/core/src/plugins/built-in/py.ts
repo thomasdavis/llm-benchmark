@@ -4,7 +4,13 @@ import { dirname, basename, extname, join } from 'path';
 import deepEqual from 'deep-equal';
 import { execa } from 'execa';
 
-import type { LangPlugin, Signature, TestCase, BenchOptions, BenchResult } from '../../types/plugin.js';
+import type {
+  LangPlugin,
+  Signature,
+  TestCase,
+  BenchOptions,
+  BenchResult,
+} from '../../types/plugin.js';
 
 /**
  * Python language plugin
@@ -18,16 +24,19 @@ export const pyPlugin: LangPlugin = {
     return this.extensions.includes(ext);
   },
 
-  async extract(filePath: string, targetFunction?: string): Promise<{
+  async extract(
+    filePath: string,
+    targetFunction?: string,
+  ): Promise<{
     code: string;
     signature: Signature;
     dependencies?: string[];
   }> {
     const content = await readFile(filePath, 'utf-8');
-    
+
     let functionMatch: RegExpMatchArray | null = null;
     let functionName = targetFunction || 'main';
-    
+
     if (targetFunction) {
       // Look for specific function
       const pattern = new RegExp(`^def\\s+${targetFunction}\\s*\\([^)]*\\)\\s*:`, 'm');
@@ -48,22 +57,22 @@ export const pyPlugin: LangPlugin = {
     const startIndex = functionMatch.index;
     const lines = content.split('\n');
     const startLine = content.substring(0, startIndex).split('\n').length - 1;
-    
+
     // Find the indentation of the def line
     const defLine = lines[startLine];
     const baseIndent = defLine.match(/^(\s*)/)?.[1] || '';
-    
+
     // Find where the function ends
     let endLine = startLine + 1;
     for (let i = startLine + 1; i < lines.length; i++) {
       const line = lines[i];
       const trimmed = line.trim();
-      
+
       // Skip empty lines and comments
       if (trimmed === '' || trimmed.startsWith('#')) {
         continue;
       }
-      
+
       // Check if we're still in the function
       const indent = line.match(/^(\s*)/)?.[1] || '';
       if (indent.length <= baseIndent.length && trimmed !== '') {
@@ -72,7 +81,7 @@ export const pyPlugin: LangPlugin = {
       }
       endLine = i + 1;
     }
-    
+
     const code = lines.slice(startLine, endLine).join('\n');
 
     // Parse signature
@@ -85,11 +94,11 @@ export const pyPlugin: LangPlugin = {
     // Extract parameters
     const paramMatch = code.match(/def\s+\w+\s*\(([^)]*)\)/);
     if (paramMatch && paramMatch[1].trim()) {
-      signature.params = paramMatch[1].split(',').map(param => {
+      signature.params = paramMatch[1].split(',').map((param) => {
         const trimmed = param.trim();
         const [name, rest] = trimmed.split(':', 2);
         const hasDefault = trimmed.includes('=');
-        
+
         return {
           name: name.trim(),
           optional: hasDefault,
@@ -100,7 +109,9 @@ export const pyPlugin: LangPlugin = {
 
     // Extract imports
     const imports = content.matchAll(/^(?:from\s+(\S+)\s+)?import\s+(.+)$/gm);
-    const dependencies = Array.from(imports).map(match => match[1] || match[2].split(',')[0].trim());
+    const dependencies = Array.from(imports).map(
+      (match) => match[1] || match[2].split(',')[0].trim(),
+    );
 
     return { code, signature, dependencies };
   },
@@ -127,7 +138,10 @@ export const pyPlugin: LangPlugin = {
     }
   },
 
-  async validate(testCases: TestCase[], variantPath: string): Promise<{
+  async validate(
+    testCases: TestCase[],
+    variantPath: string,
+  ): Promise<{
     passed: boolean;
     results: Array<{
       caseId: string;
@@ -210,7 +224,7 @@ print(json.dumps(results))
 
   async benchmark(options: BenchOptions): Promise<BenchResult[]> {
     const results: BenchResult[] = [];
-    
+
     // Create benchmark script
     const benchScript = `
 import timeit
@@ -302,15 +316,23 @@ print(json.dumps(results))
 
   async generateTestInputs(signature: Signature, count: number): Promise<unknown[][]> {
     const inputs: unknown[][] = [];
-    
+
     for (let i = 0; i < count; i++) {
       const args: unknown[] = [];
-      
+
       for (const param of signature.params) {
         // Generate based on parameter name hints
-        if (param.name.includes('num') || param.name.includes('count') || param.name.includes('n')) {
+        if (
+          param.name.includes('num') ||
+          param.name.includes('count') ||
+          param.name.includes('n')
+        ) {
           args.push(Math.floor(Math.random() * 100));
-        } else if (param.name.includes('str') || param.name.includes('text') || param.name.includes('s')) {
+        } else if (
+          param.name.includes('str') ||
+          param.name.includes('text') ||
+          param.name.includes('s')
+        ) {
           args.push(`test_${i}`);
         } else if (param.name.includes('bool') || param.name.includes('flag')) {
           args.push(Math.random() > 0.5);
@@ -323,10 +345,10 @@ print(json.dumps(results))
           args.push(Math.floor(Math.random() * 100));
         }
       }
-      
+
       inputs.push(args);
     }
-    
+
     return inputs;
   },
 };

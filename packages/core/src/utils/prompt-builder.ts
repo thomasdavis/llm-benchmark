@@ -10,12 +10,7 @@ export class PromptBuilder {
   /**
    * Build system and user prompts
    */
-  build(params: {
-    code: string;
-    signature: Signature;
-    language: string;
-    provider: string;
-  }): {
+  build(params: { code: string; signature: Signature; language: string; provider: string }): {
     systemPrompt: string;
     userPrompt: string;
   } {
@@ -37,24 +32,24 @@ export class PromptBuilder {
 
     // Use base prompt or default
     const basePrompt = this.config.basePrompt || this.getDefaultSystemPrompt(language);
-    
+
     return basePrompt.replace(/\{language\}/g, language);
   }
 
   /**
    * Build user prompt
    */
-  private buildUserPrompt(
-    code: string,
-    signature: Signature,
-    language: string
-  ): string {
+  private buildUserPrompt(code: string, signature: Signature, language: string): string {
     const langName = this.getLanguageName(language);
-    
+
     return `Optimize this ${langName} function for maximum performance:
 
 Function: ${signature.name}
-${signature.params.length > 0 ? `Parameters: ${signature.params.map(p => p.name).join(', ')}` : 'No parameters'}
+${
+  signature.params.length > 0
+    ? `Parameters: ${signature.params.map((p) => p.name).join(', ')}`
+    : 'No parameters'
+}
 ${signature.async ? 'Type: Async function' : 'Type: Sync function'}
 
 \`\`\`${language}

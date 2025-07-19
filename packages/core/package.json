@@ -38,7 +38,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "bench:perf": "node dist/cli/index.js benchmark examples/benchmark-suite.js",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",

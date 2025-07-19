@@ -82,7 +82,10 @@ export interface LangPlugin {
   /**
    * Extract function code and signature from a file
    */
-  extract(filePath: string, targetFunction?: string): Promise<{
+  extract(
+    filePath: string,
+    targetFunction?: string,
+  ): Promise<{
     code: string;
     signature: Signature;
     dependencies?: string[];
@@ -101,7 +104,10 @@ export interface LangPlugin {
   /**
    * Validate a variant against test cases
    */
-  validate(testCases: TestCase[], variantPath: string): Promise<{
+  validate(
+    testCases: TestCase[],
+    variantPath: string,
+  ): Promise<{
     passed: boolean;
     results: Array<{
       caseId: string;

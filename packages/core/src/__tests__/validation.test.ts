@@ -113,12 +113,14 @@ describe('Validation System', () => {
 
     it('should load JSON test cases', async () => {
       vi.mock('fs/promises', () => ({
-        readFile: vi.fn().mockResolvedValue(JSON.stringify({
-          cases: [
-            { input: [1, 2], output: 3 },
-            { input: [5, 5], output: 10 },
-          ],
-        })),
+        readFile: vi.fn().mockResolvedValue(
+          JSON.stringify({
+            cases: [
+              { input: [1, 2], output: 3 },
+              { input: [5, 5], output: 10 },
+            ],
+          }),
+        ),
       }));
       vi.mock('globby', () => ({
         globby: vi.fn().mockResolvedValue(['test.json']),
@@ -133,10 +135,12 @@ describe('Validation System', () => {
 
     it('should handle array format', async () => {
       vi.mock('fs/promises', () => ({
-        readFile: vi.fn().mockResolvedValue(JSON.stringify([
-          [[1, 2], 3],
-          [[5, 5], 10],
-        ])),
+        readFile: vi.fn().mockResolvedValue(
+          JSON.stringify([
+            [[1, 2], 3],
+            [[5, 5], 10],
+          ]),
+        ),
       }));
       vi.mock('globby', () => ({
         globby: vi.fn().mockResolvedValue(['test.json']),
