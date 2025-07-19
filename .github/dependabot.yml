@@ -1,0 +1,40 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '04:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - 'ajaxdavis'
+    labels:
+      - 'dependencies'
+      - 'npm'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    ignore:
+      # Ignore major version updates for these packages
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'ink'
+        update-types: ['version-update:semver-major']
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '04:00'
+    reviewers:
+      - 'ajaxdavis'
+    labels:
+      - 'dependencies'
+      - 'github-actions'
+    commit-message:
+      prefix: 'ci'
+      include: 'scope'

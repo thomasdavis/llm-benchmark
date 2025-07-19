@@ -1,0 +1,63 @@
+{
+  "name": "llm-benchmark",
+  "version": "1.0.0",
+  "description": "Everywhere-Ready LLM Code Optimizer & Self-Validating Benchmark Suite",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:ci": "pnpm -r test:ci",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "format:check": "pnpm -r format:check",
+    "typecheck": "pnpm -r typecheck",
+    "clean": "pnpm -r clean",
+    "dev": "pnpm -r --parallel dev",
+    "audit": "pnpm audit",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.1.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ajaxdavis/llm-benchmark.git"
+  },
+  "keywords": [
+    "llm",
+    "benchmark",
+    "optimization",
+    "code-generation",
+    "performance",
+    "cli"
+  ],
+  "author": "Ajax Davis",
+  "license": "MIT"
+}

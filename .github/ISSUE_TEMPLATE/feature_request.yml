@@ -1,0 +1,53 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature for llm-benchmark!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what the problem is
+      placeholder: I'm always frustrated when...
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: Any alternative solutions or features you've considered
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      options:
+        - New Language Plugin
+        - New Provider Adapter
+        - Performance Improvement
+        - UI/UX Enhancement
+        - Configuration
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contributions
+    attributes:
+      label: Contributions
+      options:
+        - label: I'm willing to submit a PR for this feature
+          required: false

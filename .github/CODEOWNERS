@@ -1,0 +1,29 @@
+# This is a CODEOWNERS file
+# These owners will be the default owners for everything in the repo
+
+# Global owners
+* @ajaxdavis
+
+# Core package
+/packages/core/ @ajaxdavis
+
+# Language plugins
+/packages/plugins/ @ajaxdavis
+
+# Provider adapters
+/packages/adapters/ @ajaxdavis
+
+# Documentation
+/docs/ @ajaxdavis
+*.md @ajaxdavis
+
+# CI/CD
+/.github/ @ajaxdavis
+
+# Configuration files
+*.json @ajaxdavis
+*.yaml @ajaxdavis
+*.yml @ajaxdavis
+
+# Examples
+/examples/ @ajaxdavis

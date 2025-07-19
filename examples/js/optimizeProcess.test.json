@@ -1,0 +1,78 @@
+{
+  "cases": [
+    {
+      "id": "empty_array",
+      "input": [[]],
+      "output": {}
+    },
+    {
+      "id": "single_valid_record",
+      "input": [[{ "id": 1, "status": "active", "value": 100, "category": "electronics" }]],
+      "output": {
+        "ELECTRONICS": {
+          "count": 1,
+          "total": 110,
+          "average": 110
+        }
+      }
+    },
+    {
+      "id": "mixed_records",
+      "input": [
+        [
+          { "id": 1, "status": "active", "value": 100, "category": "electronics" },
+          { "id": 2, "status": "inactive", "value": 50, "category": "electronics" },
+          { "id": 3, "status": "active", "value": 0, "category": "books" },
+          { "id": 4, "status": "active", "value": 200, "category": "electronics" },
+          { "id": 5, "status": "active", "value": 75, "category": "books" }
+        ]
+      ],
+      "output": {
+        "ELECTRONICS": {
+          "count": 2,
+          "total": 330,
+          "average": 165
+        },
+        "BOOKS": {
+          "count": 1,
+          "total": 82.5,
+          "average": 82.5
+        }
+      }
+    },
+    {
+      "id": "large_dataset",
+      "input": [
+        [
+          { "id": 1, "status": "active", "value": 10, "category": "a" },
+          { "id": 2, "status": "active", "value": 20, "category": "b" },
+          { "id": 3, "status": "active", "value": 30, "category": "a" },
+          { "id": 4, "status": "active", "value": 40, "category": "c" },
+          { "id": 5, "status": "active", "value": 50, "category": "b" },
+          { "id": 6, "status": "active", "value": 60, "category": "a" },
+          { "id": 7, "status": "active", "value": 70, "category": "c" },
+          { "id": 8, "status": "active", "value": 80, "category": "b" },
+          { "id": 9, "status": "active", "value": 90, "category": "a" },
+          { "id": 10, "status": "active", "value": 100, "category": "c" }
+        ]
+      ],
+      "output": {
+        "A": {
+          "count": 4,
+          "total": 209,
+          "average": 52.25
+        },
+        "B": {
+          "count": 3,
+          "total": 165,
+          "average": 55
+        },
+        "C": {
+          "count": 3,
+          "total": 231,
+          "average": 77
+        }
+      }
+    }
+  ]
+}

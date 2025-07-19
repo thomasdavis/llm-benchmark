@@ -1,0 +1,88 @@
+{
+  "name": "@llm-benchmark/core",
+  "version": "1.0.0",
+  "description": "Core package for llm-benchmark CLI",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "llm-benchmark": "./bin/llm-benchmark.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "import": "./dist/plugins/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:ci": "vitest run --reporter=verbose",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "bench:perf": "node dist/cli/index.js benchmark examples/benchmark-suite.js",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "boxen": "^7.1.1",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "csv-stringify": "^6.6.0",
+    "deep-equal": "^2.2.3",
+    "diff": "^5.1.0",
+    "dotenv": "^16.3.1",
+    "execa": "^8.0.1",
+    "figures": "^6.0.1",
+    "fs-extra": "^11.2.0",
+    "globby": "^14.0.0",
+    "gradient-string": "^2.0.2",
+    "ink": "^4.4.1",
+    "ink-spinner": "^5.0.0",
+    "ink-table": "^3.1.0",
+    "js-yaml": "^4.1.0",
+    "ora": "^8.0.1",
+    "p-limit": "^5.0.0",
+    "react": "^18.2.0",
+    "strip-ansi": "^7.1.0",
+    "update-notifier": "^7.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/benchmark": "^2.1.5",
+    "@types/deep-equal": "^1.0.4",
+    "@types/diff": "^5.0.9",
+    "@types/fs-extra": "^11.0.4",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/update-notifier": "^6.0.8",
+    "ink-testing-library": "^3.0.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

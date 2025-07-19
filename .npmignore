@@ -1,0 +1,36 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Test files
+__tests__/
+*.test.*
+*.spec.*
+coverage/
+
+# Development files
+.github/
+.husky/
+docs/
+examples/
+scripts/
+
+# Config files
+.eslintrc*
+.prettierrc*
+commitlint.config.*
+vitest.config.*
+tsconfig.json
+pnpm-workspace.yaml
+
+# Misc
+*.log
+.DS_Store
+.env*
+!.env.example
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

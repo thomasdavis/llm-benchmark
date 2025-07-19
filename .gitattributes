@@ -1,0 +1,71 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Explicitly declare text files
+*.ts text
+*.tsx text
+*.js text
+*.jsx text
+*.json text
+*.md text
+*.yml text
+*.yaml text
+*.html text
+*.css text
+*.scss text
+*.sh text
+*.py text
+*.rs text
+*.toml text
+*.lock text
+
+# Declare files that will always have CRLF line endings on checkout
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Denote all files that are truly binary and should not be modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.tar binary
+
+# Diff settings
+*.ts diff=typescript
+*.tsx diff=typescript
+*.js diff=javascript
+*.jsx diff=javascript
+
+# Linguist settings
+docs/* linguist-documentation
+*.test.ts linguist-test
+*.test.js linguist-test
+*.spec.ts linguist-test
+*.spec.js linguist-test
+examples/* linguist-documentation
+
+# Export ignore (files to exclude from archive)
+.github export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+.editorconfig export-ignore
+.eslintrc* export-ignore
+.prettierrc* export-ignore
+*.test.* export-ignore
+*.spec.* export-ignore
+__tests__ export-ignore
+docs export-ignore
+examples export-ignore
+scripts export-ignore

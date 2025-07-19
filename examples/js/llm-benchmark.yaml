@@ -1,0 +1,23 @@
+providers:
+  - openai:gpt-4o
+  - openai:gpt-3.5-turbo
+
+models:
+  openai:gpt-4o:
+    temperature: 0.2
+    maxTokens: 4096
+
+validation:
+  mode: static
+  cases: '*.test.json'
+
+bench:
+  runs: 10000
+  warmup: 50
+
+langPlugins:
+  - js
+
+output:
+  format: json
+  path: ./results.json

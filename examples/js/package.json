@@ -1,0 +1,15 @@
+{
+  "name": "llm-benchmark-example-js",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "JavaScript example for llm-benchmark",
+  "scripts": {
+    "benchmark": "llm-benchmark optimizeProcess.js",
+    "generate": "llm-benchmark generate optimizeProcess.js",
+    "validate": "llm-benchmark validate optimizeProcess.js",
+    "bench": "llm-benchmark bench optimizeProcess.js"
+  },
+  "devDependencies": {
+    "@llm-benchmark/core": "workspace:*"
+  }
+}
