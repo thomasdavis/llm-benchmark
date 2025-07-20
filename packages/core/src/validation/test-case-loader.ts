@@ -1,8 +1,7 @@
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
-import { join, dirname, basename } from 'path';
+import { join, dirname, basename, extname } from 'path';
 
-import { globby } from 'globby';
 import yaml from 'js-yaml';
 
 import type { Config } from '../types/config.js';
@@ -20,10 +19,14 @@ export class TestCaseLoader {
   async loadStaticCases(baselineFile: string): Promise<TestCase[]> {
     const testCases: TestCase[] = [];
     const baseDir = dirname(baselineFile);
+    const baseName = basename(baselineFile, extname(baselineFile));
 
     // Look for test case files
     const patterns = [
       this.config.validation.cases,
+      join(baseDir, `${baseName}.test.json`),
+      join(baseDir, `${baseName}.test.yaml`),
+      join(baseDir, `${baseName}.test.yml`),
       join(baseDir, '*.test.json'),
       join(baseDir, '*.test.yaml'),
       join(baseDir, '*.test.yml'),
@@ -36,10 +39,6 @@ export class TestCaseLoader {
     const fs = await import('fs');
     const dirFiles = fs.readdirSync(baseDir);
 
-    console.log('Looking for test files in:', baseDir);
-    console.log('Files in directory:', dirFiles);
-    console.log('Patterns to check:', patterns);
-
     for (const pattern of patterns) {
       if (pattern.includes('*')) {
         // Handle wildcards
@@ -49,14 +48,13 @@ export class TestCaseLoader {
         const regex = new RegExp('^' + fileRegex.replace(/\*/g, '.*').replace(/\./g, '\\.') + '$');
 
         if (searchDir === baseDir) {
-          files.push(...dirFiles.filter((f) => regex.test(f)).map((f) => join(baseDir, f)));
+          const matchingFiles = dirFiles.filter((f) => regex.test(f));
+          files.push(...matchingFiles.map((f) => join(baseDir, f)));
         }
       } else if (existsSync(pattern)) {
         files.push(pattern);
       }
     }
-
-    console.log('Found test files:', files);
 
     for (const file of files) {
       const cases = await this.loadCaseFile(file);
@@ -64,7 +62,6 @@ export class TestCaseLoader {
     }
 
     if (testCases.length === 0) {
-      console.log('No test cases loaded from files:', files);
       throw new Error('No test cases found. Please provide test case files.');
     }
 
