@@ -66,7 +66,7 @@ export async function benchCommand(
 
     // Validate variants first
     spinner.start('Validating variants...');
-    const validationRunner = new ValidationRunner(config, plugin);
+    const validationRunner = new ValidationRunner(config, plugin, options.debug);
     const validationResults = await validationRunner.validateFiles(
       variantFiles,
       filePath,

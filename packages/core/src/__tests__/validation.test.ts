@@ -43,7 +43,7 @@ describe.skip('Validation System', () => {
       formatCode: vi.fn(),
     };
 
-    validationRunner = new ValidationRunner(config, mockPlugin);
+    validationRunner = new ValidationRunner(config, mockPlugin, false);
   });
 
   describe('ValidationRunner', () => {
@@ -130,7 +130,7 @@ describe.skip('Validation System', () => {
     let testCaseLoader: TestCaseLoader;
 
     beforeEach(() => {
-      testCaseLoader = new TestCaseLoader(config);
+      testCaseLoader = new TestCaseLoader(config, false);
     });
 
     it('should load JSON test cases', async () => {

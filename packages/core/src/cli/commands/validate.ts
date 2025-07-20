@@ -62,7 +62,7 @@ export async function validateCommand(
 
     // Run validation
     spinner.start('Running validation...');
-    const validationRunner = new ValidationRunner(config, plugin);
+    const validationRunner = new ValidationRunner(config, plugin, options.debug);
     const results = await validationRunner.validateFiles(
       variantFiles,
       filePath,

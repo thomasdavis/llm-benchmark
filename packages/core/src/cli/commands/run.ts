@@ -97,7 +97,7 @@ export async function runCommand(
 
     // Validate variants
     if (spinner) spinner.start('Validating variants...');
-    const validationRunner = new ValidationRunner(config, plugin);
+    const validationRunner = new ValidationRunner(config, plugin, options.debug);
     const validationResults = await validationRunner.validateAll(variants, filePath);
 
     const validVariants = validationResults.filter((r) => r.passed);

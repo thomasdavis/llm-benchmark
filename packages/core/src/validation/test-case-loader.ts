@@ -11,7 +11,10 @@ import type { TestCase } from '../types/plugin.js';
  * Load test cases from various sources
  */
 export class TestCaseLoader {
-  constructor(private config: Config) {}
+  constructor(
+    private config: Config,
+    private debug = false,
+  ) {}
 
   /**
    * Load static test cases from files
@@ -34,55 +37,75 @@ export class TestCaseLoader {
       join(baseDir, '__tests__', '*.yaml'),
     ].filter(Boolean);
 
-    console.log('DEBUG: Looking for test files');
-    console.log('  baselineFile:', baselineFile);
-    console.log('  baseDir:', baseDir);
-    console.log('  baseName:', baseName);
-    console.log('  patterns:', patterns);
+    if (this.debug) {
+      console.log('DEBUG: Looking for test files');
+      console.log('  baselineFile:', baselineFile);
+      console.log('  baseDir:', baseDir);
+      console.log('  baseName:', baseName);
+      console.log('  patterns:', patterns);
+    }
 
     // Simple implementation - check for test files in the directory
     const files: string[] = [];
     const fs = await import('fs');
     const dirFiles = fs.readdirSync(baseDir);
-    console.log('  dirFiles:', dirFiles);
+    if (this.debug) {
+      console.log('  dirFiles:', dirFiles);
+    }
 
     for (const pattern of patterns) {
-      console.log(`  checking pattern: ${pattern}`);
+      if (this.debug) {
+        console.log(`  checking pattern: ${pattern}`);
+      }
       if (pattern.includes('*')) {
         // Handle wildcards
         const filePattern = pattern.startsWith('/') ? pattern : pattern;
         const searchDir = filePattern.includes('/') ? dirname(filePattern) : baseDir;
         const fileRegex = basename(filePattern);
         const regex = new RegExp('^' + fileRegex.replace(/\*/g, '.*').replace(/\./g, '\\.') + '$');
-        console.log(`    wildcard pattern: ${fileRegex} -> regex: ${regex}`);
+        if (this.debug) {
+          console.log(`    wildcard pattern: ${fileRegex} -> regex: ${regex}`);
+        }
 
         if (searchDir === baseDir) {
           const matchingFiles = dirFiles.filter((f) => regex.test(f));
-          console.log(`    matching files: ${matchingFiles}`);
+          if (this.debug) {
+            console.log(`    matching files: ${matchingFiles}`);
+          }
           files.push(...matchingFiles.map((f) => join(baseDir, f)));
         }
       } else {
         // For non-wildcard patterns, check if file exists
         if (existsSync(pattern)) {
-          console.log(`    found exact match: ${pattern}`);
+          if (this.debug) {
+            console.log(`    found exact match: ${pattern}`);
+          }
           files.push(pattern);
         } else {
-          console.log(`    pattern not found: ${pattern}`);
+          if (this.debug) {
+            console.log(`    pattern not found: ${pattern}`);
+          }
         }
       }
     }
 
-    console.log('  final files found:', files);
+    if (this.debug) {
+      console.log('  final files found:', files);
+    }
 
     for (const file of files) {
       const cases = await this.loadCaseFile(file);
       testCases.push(...cases);
     }
 
-    console.log(`  loaded ${testCases.length} test cases total`);
+    if (this.debug) {
+      console.log(`  loaded ${testCases.length} test cases total`);
+    }
 
     if (testCases.length === 0) {
-      console.log('ERROR: No test cases found. Please provide test case files.');
+      if (this.debug) {
+        console.log('ERROR: No test cases found. Please provide test case files.');
+      }
       throw new Error('No test cases found. Please provide test case files.');
     }
 

@@ -20,8 +20,9 @@ export class ValidationRunner {
   constructor(
     private config: Config,
     private plugin: LangPlugin,
+    private debug = false,
   ) {
-    this.testCaseLoader = new TestCaseLoader(config);
+    this.testCaseLoader = new TestCaseLoader(config, debug);
     this.testCaseRecorder = new TestCaseRecorder();
   }
 
