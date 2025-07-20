@@ -34,6 +34,12 @@ export class TestCaseLoader {
       join(baseDir, '__tests__', '*.yaml'),
     ].filter(Boolean);
 
+    console.log('DEBUG: Looking for test files');
+    console.log('  baselineFile:', baselineFile);
+    console.log('  baseDir:', baseDir);
+    console.log('  baseName:', baseName);
+    console.log('  patterns:', patterns);
+
     // Simple implementation - check for test files in the directory
     const files: string[] = [];
     const fs = await import('fs');
@@ -51,8 +57,14 @@ export class TestCaseLoader {
           const matchingFiles = dirFiles.filter((f) => regex.test(f));
           files.push(...matchingFiles.map((f) => join(baseDir, f)));
         }
-      } else if (existsSync(pattern)) {
-        files.push(pattern);
+      } else {
+        // For non-wildcard patterns, check if file exists
+        if (existsSync(pattern)) {
+          console.log(`Found exact match: ${pattern}`);
+          files.push(pattern);
+        } else {
+          console.log(`Pattern not found: ${pattern}`);
+        }
       }
     }
 
