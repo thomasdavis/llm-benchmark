@@ -150,7 +150,7 @@ jobs:
             echo "benchmark_ran=true" >> $GITHUB_OUTPUT
           else
             echo "Performance benchmarks not yet implemented"
-            echo '{"benchmarks":[{"name":"dummy","value":1,"unit":"ops/sec"}]}' > bench-results.json
+            echo '[{"name":"dummy","value":1,"unit":"ops/sec"}]' > bench-results.json
             echo "benchmark_ran=false" >> $GITHUB_OUTPUT
           fi
 
