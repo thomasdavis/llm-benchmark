@@ -2,7 +2,7 @@
 
 > **Everywhere-Ready LLM Code Optimizer & Self-Validating Benchmark Suite**
 
-[![npm version](https://img.shields.io/npm/v/@llm-benchmark/core.svg)](https://www.npmjs.com/package/@llm-benchmark/core)
+[![npm version](https://img.shields.io/npm/v/llm-benchmark.svg)](https://www.npmjs.com/package/llm-benchmark)
 [![CI](https://github.com/ajaxdavis/llm-benchmark/actions/workflows/ci.yml/badge.svg)](https://github.com/ajaxdavis/llm-benchmark/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -24,10 +24,10 @@ Ship "optimized by AI" code with confidence. `llm-benchmark` automatically gener
 
 ```bash
 # Install globally
-npm install -g @llm-benchmark/core
+npm install -g llm-benchmark
 
 # Or use npx
-npx @llm-benchmark/core demo
+npx llm-benchmark demo
 
 # Optimize a function
 llm-benchmark optimizeProcess.js

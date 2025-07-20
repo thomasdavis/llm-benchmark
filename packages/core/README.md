@@ -1,13 +1,13 @@
-# @llm-benchmark/core
+# llm-benchmark
 
 Core package for llm-benchmark - the LLM Code Optimizer & Self-Validating Benchmark Suite.
 
 ## Installation
 
 ```bash
-npm install -g @llm-benchmark/core
+npm install -g llm-benchmark
 # or
-pnpm add -g @llm-benchmark/core
+pnpm add -g llm-benchmark
 ```
 
 ## Usage

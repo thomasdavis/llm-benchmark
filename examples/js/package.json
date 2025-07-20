@@ -10,6 +10,6 @@
     "bench": "llm-benchmark bench optimizeProcess.js"
   },
   "devDependencies": {
-    "@llm-benchmark/core": "workspace:*"
+    "llm-benchmark": "workspace:*"
   }
 }

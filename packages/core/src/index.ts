@@ -1,4 +1,4 @@
-// Main exports for @llm-benchmark/core
+// Main exports for llm-benchmark
 
 // Types
 export * from './types/index.js';

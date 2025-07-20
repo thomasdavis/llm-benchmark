@@ -22,10 +22,8 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@llm-benchmark/core": ["./packages/core/src"],
-      "@llm-benchmark/core/*": ["./packages/core/src/*"],
-      "@llm-benchmark/adapters/*": ["./packages/adapters/*/src"],
-      "@llm-benchmark/plugins/*": ["./packages/plugins/*/src"]
+      "llm-benchmark": ["./packages/core/src"],
+      "llm-benchmark/*": ["./packages/core/src/*"]
     }
   },
   "include": ["packages/**/*.ts"],

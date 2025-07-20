@@ -76,13 +76,13 @@ This function has numerous problems:
 First, install llm-benchmark globally:
 
 ```bash
-npm install -g @llm-benchmark/core
+npm install -g llm-benchmark
 ```
 
 Or use it in your project:
 
 ```bash
-npm install --save-dev @llm-benchmark/core
+npm install --save-dev llm-benchmark
 ```
 
 ## Step 2: Create Test Cases
