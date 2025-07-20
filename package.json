@@ -1,6 +1,6 @@
 {
   "name": "llm-benchmark",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Everywhere-Ready LLM Code Optimizer & Self-Validating Benchmark Suite",
   "private": true,
   "type": "module",
