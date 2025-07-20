@@ -29,15 +29,20 @@ npm install -g llm-benchmark
 # Or use npx
 npx llm-benchmark demo
 
-# Optimize a function
+# Optimize a function (must be exported)
 llm-benchmark optimizeProcess.js
 
 # With specific providers
 llm-benchmark optimizeProcess.js --providers openai:gpt-4o anthropic:claude-3
 
+# Named export
+llm-benchmark utils.js myFunction
+
 # CI mode (no interactive UI)
 llm-benchmark optimizeProcess.js --ci
 ```
+
+**Note:** Your function must be exported (either as default export or named export) for the tool to find it.
 
 ## 📋 Prerequisites
 

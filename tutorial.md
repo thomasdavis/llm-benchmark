@@ -59,6 +59,12 @@ function fibber(n) {
     }, 50 * Math.random()); // unnecessary async delay
   });
 }
+
+// IMPORTANT: Export the function as default for llm-benchmark
+export default fibber;
+
+// Or if using CommonJS:
+// module.exports = fibber;
 ```
 
 This function has numerous problems:
@@ -83,6 +89,28 @@ Or use it in your project:
 
 ```bash
 npm install --save-dev llm-benchmark
+```
+
+## Important: Function Export Requirements
+
+llm-benchmark requires your function to be exported. The tool supports several export formats:
+
+```javascript
+// ES Modules (recommended)
+export default myFunction;
+
+// CommonJS
+module.exports = myFunction;
+
+// Named exports (specify function name in command)
+export function myFunction() {
+  /* ... */
+}
+// Usage: llm-benchmark file.js myFunction
+
+// Multiple exports (specify which one to optimize)
+export { functionA, functionB };
+// Usage: llm-benchmark file.js functionA
 ```
 
 ## Step 2: Create Test Cases
@@ -208,6 +236,8 @@ function fibber(n) {
 
   return b;
 }
+
+export default fibber;
 ```
 
 ## Step 7: Performance Comparison
