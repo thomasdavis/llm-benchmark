@@ -1,6 +1,6 @@
 {
   "name": "@llm-benchmark/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core package for llm-benchmark CLI",
   "type": "module",
   "main": "./dist/index.js",

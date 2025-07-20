@@ -18,7 +18,12 @@
     "clean": "pnpm -r clean",
     "dev": "pnpm -r --parallel dev",
     "audit": "pnpm audit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "version:patch": "cd packages/core && npm version patch",
+    "version:minor": "cd packages/core && npm version minor",
+    "version:major": "cd packages/core && npm version major",
+    "prepublish": "pnpm build && pnpm test",
+    "publish:npm": "cd packages/core && npm publish --access public"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
