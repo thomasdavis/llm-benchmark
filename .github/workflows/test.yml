@@ -161,11 +161,11 @@ jobs:
           tool: 'customBiggerIsBetter'
           output-file-path: packages/core/bench-results.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
+          auto-push: false
           alert-threshold: '200%'
           comment-on-alert: true
           fail-on-alert: false
-          skip-fetch-gh-pages: true
+          benchmark-data-dir-path: 'dev/bench'
 
   security:
     runs-on: ubuntu-latest
