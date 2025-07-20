@@ -95,23 +95,52 @@ npm install --save-dev llm-benchmark
 
 llm-benchmark requires your function to be exported. The tool supports several export formats:
 
+### ES Modules (Modern JavaScript)
+
 ```javascript
-// ES Modules (recommended)
+// Option 1: Direct export
+export default function myFunction() { /* ... */ }
+
+// Option 2: Separate definition and export
+function myFunction() { /* ... */ }
 export default myFunction;
 
-// CommonJS
-module.exports = myFunction;
+// Option 3: Named export
+export function myFunction() { /* ... */ }
+// Usage: llm-benchmark file.js myFunction
+```
 
-// Named exports (specify function name in command)
-export function myFunction() {
+**Note:** If using ES module syntax (`export`/`import`) in a `.js` file, you need one of:
+
+- A `package.json` in the same directory with `{"type": "module"}`
+- Rename your file to use `.mjs` extension
+- Use CommonJS syntax instead
+
+### CommonJS (Traditional Node.js)
+
+```javascript
+// Option 1: Direct export
+module.exports = function myFunction() {
+  /* ... */
+};
+
+// Option 2: Separate definition and export
+function myFunction() {
   /* ... */
 }
-// Usage: llm-benchmark file.js myFunction
+module.exports = myFunction;
 
-// Multiple exports (specify which one to optimize)
-export { functionA, functionB };
-// Usage: llm-benchmark file.js functionA
+// Option 3: Named exports
+module.exports = { myFunction, anotherFunction };
+// Usage: llm-benchmark file.js myFunction
 ```
+
+### File Extensions
+
+- `.js` - Treated as CommonJS by default (unless package.json has `"type": "module"`)
+- `.mjs` - Always treated as ES module
+- `.cjs` - Always treated as CommonJS
+- `.ts` - TypeScript (automatically compiled)
 
 ## Step 2: Create Test Cases
 

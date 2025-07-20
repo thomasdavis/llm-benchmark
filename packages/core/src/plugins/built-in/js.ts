@@ -67,10 +67,79 @@ export const jsPlugin: LangPlugin = {
       if (!functionMatch) {
         functionMatch = content.match(/export\s+default\s+(?:async\s*)?(?:\([^)]*\)|[^=]+)\s*=>/s);
       }
+
+      // Check for separate function definition and export
+      if (!functionMatch) {
+        const exportMatch = content.match(/export\s+default\s+(\w+)\s*;?/);
+        if (exportMatch) {
+          const exportedName = exportMatch[1];
+          // Find the function definition
+          const patterns = [
+            new RegExp(`(?:async\\s+)?function\\s+${exportedName}\\s*\\([^)]*\\)\\s*{`, 's'),
+            new RegExp(
+              `const\\s+${exportedName}\\s*=\\s*(?:async\\s*)?(?:function\\s*)?\\([^)]*\\)\\s*(?:=>\\s*)?{`,
+              's',
+            ),
+            new RegExp(
+              `var\\s+${exportedName}\\s*=\\s*(?:async\\s*)?(?:function\\s*)?\\([^)]*\\)\\s*(?:=>\\s*)?{`,
+              's',
+            ),
+            new RegExp(
+              `let\\s+${exportedName}\\s*=\\s*(?:async\\s*)?(?:function\\s*)?\\([^)]*\\)\\s*(?:=>\\s*)?{`,
+              's',
+            ),
+          ];
+
+          for (const pattern of patterns) {
+            functionMatch = content.match(pattern);
+            if (functionMatch) break;
+          }
+        }
+      }
+
+      // Also check for CommonJS module.exports
+      if (!functionMatch) {
+        const moduleExportMatch = content.match(/module\.exports\s*=\s*(\w+)\s*;?/);
+        if (moduleExportMatch) {
+          const exportedName = moduleExportMatch[1];
+          // Find the function definition
+          const patterns = [
+            new RegExp(`(?:async\\s+)?function\\s+${exportedName}\\s*\\([^)]*\\)\\s*{`, 's'),
+            new RegExp(
+              `const\\s+${exportedName}\\s*=\\s*(?:async\\s*)?(?:function\\s*)?\\([^)]*\\)\\s*(?:=>\\s*)?{`,
+              's',
+            ),
+          ];
+
+          for (const pattern of patterns) {
+            functionMatch = content.match(pattern);
+            if (functionMatch) break;
+          }
+        }
+      }
     }
 
     if (!functionMatch) {
-      throw new Error(`Function ${targetFunction || 'default export'} not found in ${filePath}`);
+      const content = await readFile(filePath, 'utf-8');
+      const hasExportDefault = content.includes('export default');
+      const hasModuleExports = content.includes('module.exports');
+
+      let errorMsg = `Function ${targetFunction || 'default export'} not found in ${filePath}`;
+
+      if (hasExportDefault && !hasModuleExports) {
+        errorMsg +=
+          '\n\nES module syntax detected. If you\'re getting this error with "export default", it might be because:\n';
+        errorMsg +=
+          '1. The file is being treated as CommonJS. Create a package.json with {"type": "module"} in the same directory\n';
+        errorMsg += '2. Or rename the file to use .mjs extension\n';
+        errorMsg += '3. Or change to CommonJS syntax: module.exports = yourFunction';
+      } else if (!hasExportDefault && !hasModuleExports) {
+        errorMsg += '\n\nNo exports found. Make sure to export your function:\n';
+        errorMsg += '- ES modules: export default yourFunction\n';
+        errorMsg += '- CommonJS: module.exports = yourFunction';
+      }
+
+      throw new Error(errorMsg);
     }
 
     // Extract the complete function
@@ -161,11 +230,40 @@ export const jsPlugin: LangPlugin = {
     const results = [];
     let allPassed = true;
 
-    // Create a test runner script
+    // Create a test runner script that handles both ES modules and CommonJS
     const testScript = `
-      import('${variantPath}').then(async (module) => {
-        const fn = module.default || module[Object.keys(module)[0]];
-        
+      const path = require('path');
+      const fs = require('fs');
+      
+      async function loadModule(modulePath) {
+        try {
+          // Try ES module import first
+          const module = await import(modulePath);
+          return module.default || module[Object.keys(module)[0]];
+        } catch (e) {
+          // Fallback to CommonJS require
+          try {
+            delete require.cache[require.resolve(modulePath)];
+            const module = require(modulePath);
+            return module.default || module;
+          } catch (requireError) {
+            // If both fail, check if it's a .js file without proper module declaration
+            // Try to evaluate it with a wrapper
+            const content = fs.readFileSync(modulePath, 'utf-8');
+            const hasExportDefault = content.includes('export default');
+            const hasModuleExports = content.includes('module.exports');
+            
+            if (hasExportDefault && !hasModuleExports) {
+              // ES module syntax in .js file - need to handle differently
+              throw new Error('ES module syntax detected. Please ensure file has .mjs extension or package.json has "type": "module"');
+            }
+            
+            throw requireError;
+          }
+        }
+      }
+      
+      loadModule('${variantPath}').then(async (fn) => {
         const testCases = ${JSON.stringify(testCases)};
         const results = [];
         
@@ -190,7 +288,13 @@ export const jsPlugin: LangPlugin = {
         }
         
         console.log(JSON.stringify(results));
-      }).catch(console.error);
+      }).catch(error => {
+        console.error(JSON.stringify({
+          error: error.message,
+          stack: error.stack
+        }));
+        process.exit(1);
+      });
     `;
 
     try {
