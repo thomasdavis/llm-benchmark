@@ -148,13 +148,13 @@ Run the benchmark:
 
 ```bash
 # Simple command - uses all providers from config
-llm-benchmark optimize fib_slow.js
+llm-benchmark fib_slow.js
 
 # Or specify providers explicitly
-llm-benchmark optimize fib_slow.js --providers openai:gpt-4o anthropic:claude-3-5-sonnet-20241022
+llm-benchmark fib_slow.js --providers openai:gpt-4o anthropic:claude-3-5-sonnet-20241022
 
 # Additional options
-llm-benchmark optimize fib_slow.js \
+llm-benchmark fib_slow.js \
   --providers openai:gpt-4o \
   --runs 1000 \
   --ci
@@ -260,7 +260,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          llm-benchmark optimize **/*.js \
+          llm-benchmark **/*.js \
             --providers "openai:gpt-4o-mini" \
             --fail-on-regression \
             --output benchmark-results.json
@@ -294,7 +294,7 @@ Function to optimize:
 Use it:
 
 ```bash
-llm-benchmark optimize fib_slow.js --prompt-file optimize-prompt.txt
+llm-benchmark fib_slow.js --prompt-file optimize-prompt.txt
 ```
 
 ### Plugin System
