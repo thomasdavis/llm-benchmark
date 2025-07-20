@@ -44,36 +44,45 @@ export class TestCaseLoader {
     const files: string[] = [];
     const fs = await import('fs');
     const dirFiles = fs.readdirSync(baseDir);
+    console.log('  dirFiles:', dirFiles);
 
     for (const pattern of patterns) {
+      console.log(`  checking pattern: ${pattern}`);
       if (pattern.includes('*')) {
         // Handle wildcards
         const filePattern = pattern.startsWith('/') ? pattern : pattern;
         const searchDir = filePattern.includes('/') ? dirname(filePattern) : baseDir;
         const fileRegex = basename(filePattern);
         const regex = new RegExp('^' + fileRegex.replace(/\*/g, '.*').replace(/\./g, '\\.') + '$');
+        console.log(`    wildcard pattern: ${fileRegex} -> regex: ${regex}`);
 
         if (searchDir === baseDir) {
           const matchingFiles = dirFiles.filter((f) => regex.test(f));
+          console.log(`    matching files: ${matchingFiles}`);
           files.push(...matchingFiles.map((f) => join(baseDir, f)));
         }
       } else {
         // For non-wildcard patterns, check if file exists
         if (existsSync(pattern)) {
-          console.log(`Found exact match: ${pattern}`);
+          console.log(`    found exact match: ${pattern}`);
           files.push(pattern);
         } else {
-          console.log(`Pattern not found: ${pattern}`);
+          console.log(`    pattern not found: ${pattern}`);
         }
       }
     }
+
+    console.log('  final files found:', files);
 
     for (const file of files) {
       const cases = await this.loadCaseFile(file);
       testCases.push(...cases);
     }
 
+    console.log(`  loaded ${testCases.length} test cases total`);
+
     if (testCases.length === 0) {
+      console.log('ERROR: No test cases found. Please provide test case files.');
       throw new Error('No test cases found. Please provide test case files.');
     }
 

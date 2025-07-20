@@ -145,4 +145,8 @@ program
 /**
  * Parse arguments and run
  */
-program.parse(process.argv);
+if (process.argv.length <= 2) {
+  program.help();
+} else {
+  program.parse(process.argv);
+}
