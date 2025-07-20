@@ -36,6 +36,10 @@ export class TestCaseLoader {
     const fs = await import('fs');
     const dirFiles = fs.readdirSync(baseDir);
 
+    console.log('Looking for test files in:', baseDir);
+    console.log('Files in directory:', dirFiles);
+    console.log('Patterns to check:', patterns);
+
     for (const pattern of patterns) {
       if (pattern.includes('*')) {
         // Handle wildcards
@@ -52,12 +56,15 @@ export class TestCaseLoader {
       }
     }
 
+    console.log('Found test files:', files);
+
     for (const file of files) {
       const cases = await this.loadCaseFile(file);
       testCases.push(...cases);
     }
 
     if (testCases.length === 0) {
+      console.log('No test cases loaded from files:', files);
       throw new Error('No test cases found. Please provide test case files.');
     }
 
