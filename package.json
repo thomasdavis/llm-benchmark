@@ -30,7 +30,7 @@
     "release:major": "./scripts/release.sh major"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
+    "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^18.4.3",
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
