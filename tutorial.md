@@ -147,11 +147,20 @@ export ANTHROPIC_API_KEY=your-anthropic-key
 Run the benchmark:
 
 ```bash
+# Simple command - uses all providers from config
+llm-benchmark optimize fib_slow.js
+
+# Or specify providers explicitly
+llm-benchmark optimize fib_slow.js --providers openai:gpt-4o anthropic:claude-3-5-sonnet-20241022
+
+# Additional options
 llm-benchmark optimize fib_slow.js \
-  --providers "openai:gpt-4o,anthropic:claude-3-5-sonnet-20241022" \
-  --test-file fib_slow.test.json \
-  --output results.json
+  --providers openai:gpt-4o \
+  --runs 1000 \
+  --ci
 ```
+
+Note: The tool automatically discovers test files named `*.test.json`, `*.test.yaml`, or `*.test.yml` in the same directory as your source file.
 
 ## Step 5: Understanding the Output
 
