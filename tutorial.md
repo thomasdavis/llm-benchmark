@@ -144,7 +144,7 @@ module.exports = { myFunction, anotherFunction };
 
 ## Step 2: Create Test Cases
 
-Create a test file `fib_slow.test.json` with expected input/output pairs:
+Create a test file `fib_slow.test.json` (note the dot before "test") with expected input/output pairs:
 
 ```json
 {
@@ -225,9 +225,10 @@ LLM Benchmark will:
 
 1. **Extract** the function from your code
 2. **Send** it to each configured LLM with optimization instructions
-3. **Validate** each optimized version against your test cases
-4. **Benchmark** the performance of valid implementations
-5. **Report** results in a table format
+3. **Save** each variant as `filename.provider.model.js` (e.g., `fib_slow.openai.gpt_4o.js`)
+4. **Validate** each optimized version against your test cases
+5. **Benchmark** the performance of valid implementations
+6. **Report** results in a table format
 
 Example output:
 

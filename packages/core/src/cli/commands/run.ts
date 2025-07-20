@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { resolve } from 'path';
+import { resolve, basename } from 'path';
 
 import chalk from 'chalk';
 import ora from 'ora';
@@ -10,6 +10,7 @@ import { PluginManager } from '../../plugins/manager.js';
 import { ProviderManager } from '../../providers/manager.js';
 import type { BenchmarkResults } from '../../types/benchmark.js';
 import { ResultsWriter } from '../../utils/results-writer.js';
+import { VariantWriter } from '../../utils/variant-writer.js';
 import { ValidationRunner } from '../../validation/runner.js';
 import { TUI } from '../tui/index.js';
 
@@ -79,9 +80,19 @@ export async function runCommand(
     if (spinner) spinner.succeed(`Generated ${variants.length} variants`);
 
     // Write variant files
+    const variantWriter = new VariantWriter(plugin);
     for (const variant of variants) {
-      await plugin.format(variant.code);
-      // Write variant file logic here
+      const formattedCode = await plugin.format(variant.code);
+      const variantPath = variantWriter.getVariantPath(filePath, variant.provider, variant.model);
+      await variantWriter.write(variantPath, formattedCode || variant.code, {
+        provider: variant.provider,
+        model: variant.model,
+        promptTokens: variant.meta.promptTokens,
+        completionTokens: variant.meta.completionTokens,
+        costUsd: variant.meta.costUsd,
+        latencyMs: variant.meta.latencyMs,
+      });
+      if (spinner) spinner.info(`Saved variant: ${basename(variantPath)}`);
     }
 
     // Validate variants
