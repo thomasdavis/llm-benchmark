@@ -142,30 +142,14 @@ jobs:
         run: pnpm build
 
       - name: Run performance benchmarks
-        id: run-benchmarks
         run: |
           cd packages/core
-          # Try to run benchmarks, create dummy file if it fails
+          # Try to run benchmarks
           if npm run bench:perf; then
-            echo "benchmark_ran=true" >> $GITHUB_OUTPUT
+            echo "✅ Performance benchmarks completed"
           else
-            echo "Performance benchmarks not yet implemented"
-            echo '[{"name":"dummy","value":1,"unit":"ops/sec"}]' > bench-results.json
-            echo "benchmark_ran=false" >> $GITHUB_OUTPUT
+            echo "⚠️  Performance benchmarks not yet implemented"
           fi
-
-      - name: Store benchmark result
-        if: success()
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'customBiggerIsBetter'
-          output-file-path: packages/core/bench-results.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: false
-          alert-threshold: '200%'
-          comment-on-alert: true
-          fail-on-alert: false
-          benchmark-data-dir-path: 'dev/bench'
 
   security:
     runs-on: ubuntu-latest
